@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Daviess County 2026 Candidate Accountability - Questions for commissioners and judge-executive candidates">
     <title>Daviess County 2026: Candidate Accountability</title>
     <style>
+        /* CSS Custom Properties for theming */
         :root {
             --bg: #f4f4f5;
             --text: #18181b;
@@ -15,8 +17,11 @@
             --muted: #71717a;
             --code-bg: #2d2d30;
             --code-text: #e0e0e0;
+            --border: #e4e4e7;
+            --shadow: rgba(0, 0, 0, 0.1);
         }
 
+        /* Dark mode support using prefers-color-scheme */
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg: #18181b;
@@ -24,7 +29,14 @@
                 --card-bg: #27272a;
                 --accent: #60a5fa;
                 --muted: #a1a1aa;
+                --border: #3f3f46;
+                --shadow: rgba(0, 0, 0, 0.3);
             }
+        }
+
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
         }
 
         body {
@@ -34,64 +46,78 @@
             margin: 0;
             padding: 0;
             line-height: 1.5;
+            min-height: 100vh;
         }
 
+        /* Header Styles */
         header {
             max-width: 800px;
             margin: 0 auto;
             padding: 2rem 1rem;
             text-align: left;
-            border-bottom: 1px solid var(--muted);
+            border-bottom: 1px solid var(--border);
         }
 
         h1 {
             font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin: 0 0 0.5rem 0;
         }
 
-        p.subtitle {
+        .subtitle {
             color: var(--muted);
             font-size: 0.9rem;
+            margin: 0;
         }
 
-        /* Controls */
+        /* Tab Controls */
         .controls {
             display: flex;
             gap: 1rem;
             max-width: 800px;
             margin: 1.5rem auto;
             padding: 0 1rem;
+            flex-wrap: wrap;
         }
 
-        button.tab {
+        .tab {
             background: none;
             border: none;
             border-bottom: 2px solid transparent;
             color: var(--muted);
             font-size: 1rem;
-            padding-bottom: 0.5rem;
+            padding: 0.5rem 0;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
+            font-family: inherit;
         }
 
-        button.tab.active {
+        .tab:hover {
+            color: var(--text);
+        }
+
+        .tab:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 4px;
+        }
+
+        .tab.active {
             color: var(--text);
             border-bottom: 2px solid var(--accent);
             font-weight: 600;
         }
 
-        /* Grid */
+        /* Card Grid */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
             gap: 1.5rem;
             max-width: 800px;
             margin: 0 auto;
             padding: 0 1rem 4rem 1rem;
         }
 
-        /* Card Mechanics */
+        /* Card Flip Mechanics */
         .card-container {
             background-color: transparent;
             perspective: 1000px;
@@ -99,14 +125,20 @@
             cursor: pointer;
         }
 
+        .card-container:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 4px;
+            border-radius: 8px;
+        }
+
         .card-inner {
             position: relative;
             width: 100%;
             height: 100%;
             text-align: left;
-            transition: transform 0.6s;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             transform-style: preserve-3d;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 6px -1px var(--shadow), 0 2px 4px -1px var(--shadow);
             border-radius: 8px;
         }
 
@@ -114,7 +146,8 @@
             transform: rotateY(180deg);
         }
 
-        .card-front, .card-back {
+        .card-front,
+        .card-back {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -123,13 +156,12 @@
             background-color: var(--card-bg);
             border-radius: 8px;
             padding: 1.5rem;
-            box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            border: 1px solid var(--muted);
+            border: 1px solid var(--border);
         }
 
-        /* Front Styling */
+        /* Front Card Styles */
         .card-front {
             justify-content: space-between;
         }
@@ -146,16 +178,18 @@
         .question-text {
             font-size: 1.125rem;
             font-weight: 500;
+            flex-grow: 1;
         }
 
         .tap-hint {
             font-size: 0.75rem;
             color: var(--muted);
             text-align: right;
-            margin-top: auto;
+            margin-top: 1rem;
+            font-style: italic;
         }
 
-        /* Back Styling */
+        /* Back Card Styles */
         .card-back {
             transform: rotateY(180deg);
             overflow-y: auto;
@@ -166,8 +200,8 @@
             font-weight: 700;
             color: var(--muted);
             text-transform: uppercase;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--muted);
+            margin: 0 0 1rem 0;
+            border-bottom: 1px solid var(--border);
             padding-bottom: 0.5rem;
         }
 
@@ -184,211 +218,392 @@
             gap: 0.5rem;
         }
 
-        .red-flag { color: var(--danger); }
-        .green-flag { color: var(--success); }
+        .red-flag {
+            color: var(--danger);
+        }
+
+        .green-flag {
+            color: var(--success);
+        }
 
         .flag-text {
             font-size: 0.9rem;
             margin: 0;
             color: var(--text);
+            line-height: 1.4;
         }
 
-        /* Special style for instructions */
+        /* Code/Instruction Styles */
         code {
             background: var(--code-bg);
             color: var(--code-text);
             padding: 0.2rem 0.4rem;
             border-radius: 4px;
             font-size: 0.8rem;
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
         }
 
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 640px) {
+            h1 {
+                font-size: 1.25rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-container {
+                height: 280px;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .controls {
+                display: none;
+            }
+
+            .card-container {
+                page-break-inside: avoid;
+            }
+        }
     </style>
 </head>
 <body>
 
-<header>
+<header role="banner">
     <h1>Questions</h1>
     <p class="subtitle">Daviess County Candidate Accountability.</p>
 </header>
 
-<div class="controls">
-    <button class="tab active" onclick="filterCards('commissioner')">Commissioners</button>
-    <button class="tab" onclick="filterCards('judge')">Judge-Executive</button>
-</div>
+<nav class="controls" role="navigation" aria-label="Candidate type filter">
+    <button class="tab active"
+            data-role="commissioner"
+            aria-label="Show Commissioner questions"
+            aria-pressed="true">
+        Commissioners
+    </button>
+    <button class="tab"
+            data-role="judge"
+            aria-label="Show Judge-Executive questions"
+            aria-pressed="false">
+        Judge-Executive
+    </button>
+</nav>
 
-<div class="grid" id="cardGrid">
+<main>
+    <div class="grid" id="cardGrid" role="list" aria-live="polite" aria-label="Candidate questions">
+        <!-- Cards will be dynamically inserted here -->
     </div>
+</main>
 
 <script>
-    // Data Source
+    /**
+     * Candidate Accountability Question Cards
+     *
+     * This application displays accountability questions for Daviess County candidates.
+     * Features:
+     * - Flip cards to reveal analysis
+     * - Filter by candidate role (commissioner/judge)
+     * - Keyboard accessible
+     * - Responsive design
+     *
+     * Developer Guide:
+     * - To add new cards, add objects to the 'data' array below
+     * - Each card needs: role, topic, question, redFlag, goodSign
+     * - Cards automatically render based on selected role filter
+     */
+
+    // ========================================
+    // DATA SOURCE
+    // ========================================
     const data = [
         // COMMISSIONER QUESTIONS
         {
             role: 'commissioner',
             topic: 'Budget & Funding',
-            [span_0](start_span)[span_1](start_span)question: "Will you vote to restore RiverPark Center's $12,500 county allocation?[span_0](end_span)[span_1](end_span)",
-            [span_2](start_span)[span_3](start_span)redFlag: "Defends using budget as leverage against organizations[span_2](end_span)[span_3](end_span).",
-            [span_4](start_span)goodSign: "Says budget shouldn't be used as a weapon against cultural orgs[span_4](end_span)."
+            question: "Will you vote to restore RiverPark Center's $12,500 county allocation?",
+            redFlag: "Defends using budget as leverage against organizations.",
+            goodSign: "Says budget shouldn't be used as a weapon against cultural orgs."
         },
         {
             role: 'commissioner',
             topic: 'Fiscal Responsibility',
-            question: "DCC4D's demands cost taxpayers $35k in reviews. [span_5](start_span)How will you balance demands against fiscal responsibility?[span_5](end_span)",
-            [span_6](start_span)redFlag: "Praises DCC4D; ignores the wasted cost[span_6](end_span).",
-            [span_7](start_span)goodSign: "Criticizes the $35,000 cost as wasteful[span_7](end_span)."
+            question: "DCC4D's demands cost taxpayers $35k in reviews. How will you balance demands against fiscal responsibility?",
+            redFlag: "Praises DCC4D; ignores the wasted cost.",
+            goodSign: "Criticizes the $35,000 cost as wasteful."
         },
         {
             role: 'commissioner',
             topic: 'Library Appointments',
-            [span_8](start_span)question: "If the Judge-Executive nominates someone who publicly supports removing books from teen sections, would you approve that appointment?[span_8](end_span)",
-            [span_9](start_span)redFlag: "Uses phrases like 'protecting children' or 'community values' to justify censorship[span_9](end_span).",
-            [span_10](start_span)goodSign: "Commits to professional library standards over ideology[span_10](end_span)."
+            question: "If the Judge-Executive nominates someone who publicly supports removing books from teen sections, would you approve that appointment?",
+            redFlag: "Uses phrases like 'protecting children' or 'community values' to justify censorship.",
+            goodSign: "Commits to professional library standards over ideology."
         },
         {
             role: 'commissioner',
             topic: 'Oversight',
-            [span_11](start_span)question: "If professional librarians say a book is age-appropriate but a vocal group disagrees, whose judgment should prevail?[span_11](end_span)",
-            [span_12](start_span)redFlag: "Says library needs to 'reflect' conservative/religious values; dismisses experts[span_12](end_span).",
-            [span_13](start_span)goodSign: "Sides with professional librarians/standards[span_13](end_span)."
+            question: "If professional librarians say a book is age-appropriate but a vocal group disagrees, whose judgment should prevail?",
+            redFlag: "Says library needs to 'reflect' conservative/religious values; dismisses experts.",
+            goodSign: "Sides with professional librarians/standards."
         },
         {
             role: 'commissioner',
             topic: 'Community',
-            question: "Owensboro scored lowest in KY for LGBTQ+ inclusion. [span_14](start_span)Should the county prioritize partnerships with inclusive orgs?[span_14](end_span)",
-            [span_15](start_span)redFlag: "Deflects to 'parents' rights' or refuses to answer hypotheticals[span_15](end_span).",
-            [span_16](start_span)goodSign: "Acknowledges LGBTQ+ residents deserve representation[span_16](end_span)."
+            question: "Owensboro scored lowest in KY for LGBTQ+ inclusion. Should the county prioritize partnerships with inclusive orgs?",
+            redFlag: "Deflects to 'parents' rights' or refuses to answer hypotheticals.",
+            goodSign: "Acknowledges LGBTQ+ residents deserve representation."
         },
 
         // JUDGE-EXECUTIVE QUESTIONS
         {
             role: 'judge',
             topic: 'Appointments',
-            [span_17](start_span)question: "Will you commit to appointing board members recommended by the KY Dept of Libraries and Archives?[span_17](end_span)",
-            [span_18](start_span)redFlag: "Criticizes current library director; insists on political/religious alignment[span_18](end_span).",
-            [span_19](start_span)goodSign: "Will follow KDLA recommendations[span_19](end_span)."
+            question: "Will you commit to appointing board members recommended by the KY Dept of Libraries and Archives?",
+            redFlag: "Criticizes current library director; insists on political/religious alignment.",
+            goodSign: "Will follow KDLA recommendations."
         },
         {
             role: 'judge',
             topic: 'DCC4D Alignment',
-            question: "Two recent appointees align with DCC4D's agenda. [span_20](start_span)Do you support those appointments?[span_20](end_span)",
-            [span_21](start_span)redFlag: "Praises DCC4D or mentions them as allies[span_21](end_span).",
-            [span_22](start_span)goodSign: "Commits to professional library standards[span_22](end_span)."
+            question: "Two recent appointees align with DCC4D's agenda. Do you support those appointments?",
+            redFlag: "Praises DCC4D or mentions them as allies.",
+            goodSign: "Commits to professional library standards."
         },
         {
             role: 'judge',
             topic: 'Political Coordination',
-            question: "Texts show Rep. DJ Johnson suggested you work with DCC4D to 'develop a unified strategy' against the library. [span_23](start_span)Did you?[span_23](end_span)",
-            [span_24](start_span)redFlag: "Evasion: 'I need to learn more' or 'I respect all viewpoints' without denial[span_24](end_span).",
+            question: "Texts show Rep. DJ Johnson suggested you work with DCC4D to 'develop a unified strategy' against the library. Did you?",
+            redFlag: "Evasion: 'I need to learn more' or 'I respect all viewpoints' without denial.",
             goodSign: "Direct honest answer; rejects political interference in library governance."
         },
         {
             role: 'judge',
             topic: 'Threats',
-            [span_25](start_span)question: "Is threatening library staff with termination an acceptable way to influence library policy?[span_25](end_span)",
+            question: "Is threatening library staff with termination an acceptable way to influence library policy?",
             redFlag: "Avoids the question; pivots to 'accountability' for staff.",
             goodSign: "Condemns using employment threats to force policy changes."
         },
         {
             role: 'judge',
             topic: 'Ideology',
-            question: "You compared library board appointments to Supreme Court nominations. [span_26](start_span)Do you believe library boards should be ideological?[span_26](end_span)",
-            [span_27](start_span)[span_28](start_span)redFlag: "Says 'ideology exists in many realms' or implies board should reflect HIS views[span_27](end_span)[span_28](end_span).",
-            [span_29](start_span)goodSign: "Simple No: Boards should serve the entire community[span_29](end_span)."
+            question: "You compared library board appointments to Supreme Court nominations. Do you believe library boards should be ideological?",
+            redFlag: "Says 'ideology exists in many realms' or implies board should reflect HIS views.",
+            goodSign: "Simple No: Boards should serve the entire community."
         },
         {
             role: 'judge',
             topic: 'Transparency',
-            question: "You rejected four KDLA candidates. [span_30](start_span)What were you looking for that qualified professionals couldn't provide?[span_30](end_span)",
+            question: "You rejected four KDLA candidates. What were you looking for that qualified professionals couldn't provide?",
             redFlag: "Vague answers about 'fresh perspective' or 'community alignment'.",
-            [span_31](start_span)goodSign: "Admits need for transparency; commits to clear criteria[span_31](end_span)."
-        },
+            goodSign: "Admits need for transparency; commits to clear criteria."
+        }
 
         // ==========================================
         // HOW TO ADD NEW CARDS:
-        // Copy the block below (from { to },) 
-        // and paste it above this comment.
         // ==========================================
-        
-        /* {
-            role: 'commissioner',  // or 'judge'
-            topic: 'TOPIC NAME HERE',
-            question: "TYPE YOUR QUESTION HERE",
-            redFlag: "TYPE THE RED FLAG HERE",
-            goodSign: "TYPE THE GOOD SIGN HERE"
-        },
-        */
+        // 1. Copy the template below (between the /* and */)
+        // 2. Remove the comment markers /* and */
+        // 3. Paste it above this comment section
+        // 4. Add a comma after the previous card's closing }
+        // 5. Fill in your content
+        // 6. Save the file and refresh your browser
+        // ==========================================
 
-        // DUMMY CARD TO SHOW YOU IT WORKS (You can delete this)
-        {
-            role: 'commissioner',
-            topic: 'New Card Template',
-            question: "This is a blank card example. Tap to see how to add more.",
-            redFlag: "Don't edit the HTML directly unless you know how.",
-            goodSign: "Look at the bottom of the script tag in the file. Copy the template block and fill it in."
+        /*
+        ,{
+            role: 'commissioner',  // Use 'commissioner' or 'judge'
+            topic: 'YOUR TOPIC HERE',
+            question: "Your question here?",
+            redFlag: "What would be a concerning answer.",
+            goodSign: "What would be a good answer."
         }
+        */
     ];
 
+    // ========================================
+    // DOM ELEMENTS
+    // ========================================
     const grid = document.getElementById('cardGrid');
     const tabs = document.querySelectorAll('.tab');
 
-    function renderCards(filterRole) {
-        grid.innerHTML = '';
-        const filtered = data.filter(item => item.role === filterRole);
-        
-        filtered.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'card-container';
-            card.innerHTML = `
-                <div class="card-inner">
-                    <div class="card-front">
-                        <div>
-                            <div class="topic-tag">${item.topic}</div>
-                            <div class="question-text">${item.question}</div>
-                        </div>
-                        <div class="tap-hint">Tap to see what to watch for ↻</div>
-                    </div>
-                    <div class="card-back">
-                        <div class="analysis-title">The Cheat Sheet</div>
-                        
-                        <div class="flag-group">
-                            <div class="flag-label red-flag">
-                                <span>🚩</span> RED FLAG
-                            </div>
-                            <p class="flag-text">${item.redFlag}</p>
-                        </div>
+    // ========================================
+    // UTILITY FUNCTIONS
+    // ========================================
 
-                        <div class="flag-group">
-                            <div class="flag-label green-flag">
-                                <span>✅</span> GREEN FLAG
-                            </div>
-                            <p class="flag-text">${item.goodSign}</p>
+    /**
+     * Sanitizes HTML to prevent XSS attacks
+     * @param {string} str - The string to sanitize
+     * @returns {string} - Sanitized string
+     */
+    const sanitizeHTML = (str) => {
+        const temp = document.createElement('div');
+        temp.textContent = str;
+        return temp.innerHTML;
+    };
+
+    /**
+     * Creates a card element with proper accessibility
+     * @param {Object} item - Card data object
+     * @param {number} index - Card index for unique IDs
+     * @returns {HTMLElement} - Card DOM element
+     */
+    const createCardElement = (item, index) => {
+        const card = document.createElement('div');
+        card.className = 'card-container';
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `Question card: ${item.topic}. Click or press Enter to flip.`);
+        card.setAttribute('data-index', index);
+
+        card.innerHTML = `
+            <div class="card-inner">
+                <div class="card-front">
+                    <div>
+                        <div class="topic-tag">${sanitizeHTML(item.topic)}</div>
+                        <div class="question-text">${sanitizeHTML(item.question)}</div>
+                    </div>
+                    <div class="tap-hint">Tap to see what to watch for ↻</div>
+                </div>
+                <div class="card-back">
+                    <div class="analysis-title">The Cheat Sheet</div>
+
+                    <div class="flag-group">
+                        <div class="flag-label red-flag">
+                            <span aria-hidden="true">🚩</span>
+                            <span>RED FLAG</span>
                         </div>
+                        <p class="flag-text">${sanitizeHTML(item.redFlag)}</p>
+                    </div>
+
+                    <div class="flag-group">
+                        <div class="flag-label green-flag">
+                            <span aria-hidden="true">✅</span>
+                            <span>GREEN FLAG</span>
+                        </div>
+                        <p class="flag-text">${sanitizeHTML(item.goodSign)}</p>
                     </div>
                 </div>
-            `;
-            
-            // Add click event for flip
-            card.addEventListener('click', function() {
-                this.classList.toggle('flipped');
+            </div>
+        `;
+
+        return card;
+    };
+
+    /**
+     * Toggles card flip state
+     * @param {HTMLElement} card - The card element to flip
+     */
+    const toggleCard = (card) => {
+        const isFlipped = card.classList.toggle('flipped');
+        const index = card.getAttribute('data-index');
+        const topic = data[index]?.topic || 'Question';
+
+        card.setAttribute(
+            'aria-label',
+            isFlipped
+                ? `${topic} - showing analysis. Click or press Enter to flip back.`
+                : `${topic}. Click or press Enter to flip.`
+        );
+    };
+
+    /**
+     * Renders cards for the specified role
+     * @param {string} filterRole - Role to filter by ('commissioner' or 'judge')
+     */
+    const renderCards = (filterRole) => {
+        // Clear existing cards
+        grid.innerHTML = '';
+
+        // Filter data by role
+        const filtered = data.filter(item => item.role === filterRole);
+
+        if (filtered.length === 0) {
+            grid.innerHTML = '<div class="loading">No questions found for this role.</div>';
+            return;
+        }
+
+        // Create and append cards
+        filtered.forEach((item, index) => {
+            const card = createCardElement(item, index);
+
+            // Click event
+            card.addEventListener('click', () => toggleCard(card));
+
+            // Keyboard events (Enter and Space)
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleCard(card);
+                }
             });
-            
+
             grid.appendChild(card);
         });
-    }
+    };
 
-    function filterCards(role) {
-        // Update tabs
-        tabs.forEach(t => t.classList.remove('active'));
-        const activeTab = Array.from(tabs).find(t => t.getAttribute('onclick').includes(role));
-        if(activeTab) activeTab.classList.add('active');
+    /**
+     * Filters cards and updates tab states
+     * @param {string} role - Role to filter by
+     */
+    const filterCards = (role) => {
+        // Update tab states
+        tabs.forEach(tab => {
+            const tabRole = tab.getAttribute('data-role');
+            const isActive = tabRole === role;
 
-        // Render
+            tab.classList.toggle('active', isActive);
+            tab.setAttribute('aria-pressed', isActive.toString());
+        });
+
+        // Render filtered cards
         renderCards(role);
-    }
+    };
 
-    // Initial Load
-    renderCards('commissioner');
+    // ========================================
+    // EVENT LISTENERS
+    // ========================================
+
+    // Tab click events
+    tabs.forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            const role = e.target.getAttribute('data-role');
+            filterCards(role);
+        });
+    });
+
+    // ========================================
+    // INITIALIZATION
+    // ========================================
+
+    // Validate data on load
+    const validateData = () => {
+        const requiredFields = ['role', 'topic', 'question', 'redFlag', 'goodSign'];
+        const invalidItems = data.filter(item =>
+            !requiredFields.every(field => item[field])
+        );
+
+        if (invalidItems.length > 0) {
+            console.warn('Some data items are missing required fields:', invalidItems);
+        }
+    };
+
+    // Initialize app
+    const init = () => {
+        validateData();
+        renderCards('commissioner');
+    };
+
+    // Start the application
+    init();
 
 </script>
 </body>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Validation Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            color: #00ff00;
+        }
+        .test { margin: 1rem 0; padding: 1rem; border: 1px solid #333; }
+        .pass { border-left: 4px solid #00ff00; }
+        .fail { border-left: 4px solid #ff0000; color: #ff6666; }
+        h1 { color: #00ff00; }
+        .summary { margin-top: 2rem; padding: 1rem; background: #222; }
+    </style>
+</head>
+<body>
+    <h1>Index.html Validation Tests</h1>
+    <div id="results"></div>
+    <div class="summary" id="summary"></div>
+
+    <script>
+        // Simple test framework
+        const tests = [];
+        let passed = 0;
+        let failed = 0;
+
+        function test(name, fn) {
+            try {
+                fn();
+                tests.push({ name, status: 'pass' });
+                passed++;
+            } catch (error) {
+                tests.push({ name, status: 'fail', error: error.message });
+                failed++;
+            }
+        }
+
+        function assert(condition, message) {
+            if (!condition) {
+                throw new Error(message || 'Assertion failed');
+            }
+        }
+
+        // Load and parse Index.html
+        fetch('Index.html')
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                // Test 1: Valid HTML structure
+                test('HTML has valid DOCTYPE', () => {
+                    assert(html.startsWith('<!DOCTYPE html>'), 'DOCTYPE is missing or incorrect');
+                });
+
+                // Test 2: Charset is UTF-8
+                test('Charset is UTF-8', () => {
+                    const meta = doc.querySelector('meta[charset]');
+                    assert(meta && meta.getAttribute('charset') === 'UTF-8', 'UTF-8 charset not found');
+                });
+
+                // Test 3: Viewport meta tag exists
+                test('Viewport meta tag exists', () => {
+                    const viewport = doc.querySelector('meta[name="viewport"]');
+                    assert(viewport, 'Viewport meta tag is missing');
+                });
+
+                // Test 4: Title tag exists and is not empty
+                test('Title tag exists and is not empty', () => {
+                    const title = doc.querySelector('title');
+                    assert(title && title.textContent.trim().length > 0, 'Title is missing or empty');
+                });
+
+                // Test 5: No malformed span markers
+                test('No malformed span markers', () => {
+                    assert(!html.includes('[span_'), 'Found malformed span markers');
+                    assert(!html.includes('](start_span)'), 'Found malformed start_span markers');
+                    assert(!html.includes('](end_span)'), 'Found malformed end_span markers');
+                });
+
+                // Test 6: JavaScript data array is valid
+                test('Data array is properly formatted', () => {
+                    const scriptContent = html.match(/<script>([\s\S]*?)<\/script>/);
+                    assert(scriptContent && scriptContent[1].includes('const data = ['), 'Data array not found');
+                    assert(!scriptContent[1].includes('var '), 'Found deprecated var keyword');
+                });
+
+                // Test 7: Accessibility attributes present
+                test('ARIA attributes present', () => {
+                    assert(html.includes('aria-label'), 'No aria-label attributes found');
+                    assert(html.includes('role='), 'No role attributes found');
+                });
+
+                // Test 8: Modern JavaScript syntax
+                test('Uses modern JavaScript (const/let)', () => {
+                    const scriptContent = html.match(/<script>([\s\S]*?)<\/script>/)[1];
+                    assert(scriptContent.includes('const '), 'const keyword not found');
+                    assert(!scriptContent.includes('function('), 'Found old-style function syntax');
+                });
+
+                // Test 9: CSS custom properties used
+                test('CSS uses custom properties', () => {
+                    const styleContent = html.match(/<style>([\s\S]*?)<\/style>/)[1];
+                    assert(styleContent.includes('--bg:'), 'CSS custom properties not found');
+                    assert(styleContent.includes('var(--'), 'var() usage not found');
+                });
+
+                // Test 10: Dark mode support
+                test('Dark mode support exists', () => {
+                    assert(html.includes('prefers-color-scheme: dark'), 'Dark mode media query not found');
+                });
+
+                // Test 11: Semantic HTML elements
+                test('Uses semantic HTML5 elements', () => {
+                    assert(html.includes('<header'), 'header element not found');
+                    assert(html.includes('<nav'), 'nav element not found');
+                    assert(html.includes('<main'), 'main element not found');
+                });
+
+                // Test 12: No inline event handlers
+                test('No inline onclick attributes', () => {
+                    const buttons = doc.querySelectorAll('button');
+                    buttons.forEach(btn => {
+                        assert(!btn.hasAttribute('onclick'), 'Found inline onclick handler');
+                    });
+                });
+
+                // Test 13: Proper button attributes
+                test('Buttons have proper data attributes', () => {
+                    const tabs = doc.querySelectorAll('.tab');
+                    assert(tabs.length > 0, 'No tab buttons found');
+                    tabs.forEach(tab => {
+                        assert(tab.hasAttribute('data-role'), 'Tab missing data-role attribute');
+                    });
+                });
+
+                // Test 14: JSDoc comments present
+                test('JavaScript has JSDoc comments', () => {
+                    const scriptContent = html.match(/<script>([\s\S]*?)<\/script>/)[1];
+                    assert(scriptContent.includes('/**'), 'JSDoc comments not found');
+                    assert(scriptContent.includes('@param'), '@param tags not found');
+                });
+
+                // Test 15: Responsive design
+                test('Has responsive design media queries', () => {
+                    const styleContent = html.match(/<style>([\s\S]*?)<\/style>/)[1];
+                    assert(styleContent.includes('@media'), 'Media queries not found');
+                });
+
+                // Display results
+                const resultsDiv = document.getElementById('results');
+                tests.forEach(t => {
+                    const div = document.createElement('div');
+                    div.className = `test ${t.status}`;
+                    div.innerHTML = `
+                        <strong>${t.status.toUpperCase()}</strong>: ${t.name}
+                        ${t.error ? `<br><small>Error: ${t.error}</small>` : ''}
+                    `;
+                    resultsDiv.appendChild(div);
+                });
+
+                // Display summary
+                const summaryDiv = document.getElementById('summary');
+                const total = passed + failed;
+                const percentage = ((passed / total) * 100).toFixed(1);
+                summaryDiv.innerHTML = `
+                    <h2>Test Summary</h2>
+                    <p>Total: ${total} | Passed: ${passed} | Failed: ${failed}</p>
+                    <p>Success Rate: ${percentage}%</p>
+                    ${failed === 0 ? '<p style="color: #00ff00;">✓ All tests passed!</p>' : '<p style="color: #ff6666;">✗ Some tests failed</p>'}
+                `;
+            })
+            .catch(error => {
+                document.getElementById('results').innerHTML = `
+                    <div class="test fail">
+                        <strong>ERROR</strong>: Could not load Index.html<br>
+                        <small>${error.message}</small>
+                    </div>
+                `;
+            });
+    </script>
+</body>
+</html>
